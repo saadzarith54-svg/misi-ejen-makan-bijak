@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISI EJEN: MAKAN BIJAK</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron & Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050b14;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Sci-Fi Grid Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(6, 182, 212, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism Hologram Effect */
+        .hologram-card {
+            background: rgba(10, 25, 47, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.15), inset 0 0 15px rgba(6, 182, 212, 0.05);
+        }
+
+        .hologram-card:hover {
+            border-color: rgba(6, 182, 212, 0.8);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4), inset 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        /* Glowing text & borders */
+        .glow-text-cyan {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+        .glow-text-amber {
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-cyber {
+            background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+            transition: all 0.3s ease;
+        }
+        .btn-cyber:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0891b2;
+            border-radius: 4px;
+        }
+
+        /* Scanline animation */
+        .scanline {
+            width: 100%;
+            height: 4px;
+            background: rgba(6, 182, 212, 0.6);
+            opacity: 0.7;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scan 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-grid min-h-screen text-slate-100 flex flex-col justify-between relative selection:bg-cyan-500 selection:text-black">
+    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/40 via-slate-950/80 to-black pointer-events-none -z-10"></div>
+    <div class="scanline z-50"></div>
+
+    <header class="w-full border-b border-cyan-500/30 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <!-- Logo / Game Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-400 font-orbitron font-black text-xl shadow-[0_0_10px_rgba(6,182,212,0.5)]">
+                    <i class="fa-solid fa-user-ninja"></i>
+                </div>
+                <div>
+                    <h1 class="font-orbitron font-bold text-lg md:text-xl text-cyan-400 tracking-wider glow-text-cyan">MISI EJEN: MAKAN BIJAK</h1>
+                    <p class="text-xs text-slate-400 font-medium">PK TAHUN 2 • UNIT 8.1 AMALAN PEMAKANAN SIHAT</p>
+                </div>
+            </div>
+
+            <!-- HUD Stats (Score, Progress, Badges) -->
+            <div id="hud-stats" class="hidden flex items-center gap-4 bg-slate-900/90 border border-cyan-500/40 rounded-xl px-4 py-2 text-sm font-orbitron">
+                <!-- Score Counter -->
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-amber-400 text-base"></i>
+                    <span class="text-slate-400 text-xs hidden sm:inline">SKOR:</span>
+                    <span id="score-val" class="text-amber-400 font-bold text-lg">0</span>
+                </div>
+                <div class="h-6 w-px bg-cyan-500/30"></div>
+                <!-- Mission Progress -->
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-cyan-400 text-base"></i>
+                    <span class="text-slate-400 text-xs hidden sm:inline">TAHAP:</span>
+                    <span id="level-indicator" class="text-cyan-300 font-bold">1 / 3</span>
+                </div>
+                <div class="h-6 w-px bg-cyan-500/30"></div>
+                <!-- Badges Status -->
+                <div class="flex gap-1.5" id="badge-container">
+                    <span id="badge-1" class="w-6 h-6 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-xs opacity-40" title="Lencana Ejen Pengamat"><i class="fa-solid fa-eye text-cyan-400"></i></span>
+                    <span id="badge-2" class="w-6 h-6 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-xs opacity-40" title="Lencana Ejen Penilai"><i class="fa-solid fa-filter text-emerald-400"></i></span>
+                    <span id="badge-3" class="w-6 h-6 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center text-xs opacity-40" title="Lencana Ejen Master"><i class="fa-solid fa-crown text-amber-400"></i></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full p-4 md:p-6 flex-grow flex items-center justify-center relative z-10">
+
+        <!-- ================= SKRIN UTAMA (START SCREEN) ================= -->
+        <section id="screen-start" class="w-full text-center space-y-6 py-6">
+            <div class="relative inline-block mb-2">
+                <div class="w-28 h-28 md:w-36 md:h-36 mx-auto rounded-full bg-cyan-500/10 border-2 border-cyan-400 flex items-center justify-center text-cyan-300 text-5xl md:text-6xl animate-float shadow-[0_0_30px_rgba(6,182,212,0.4)]">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <span class="absolute bottom-0 right-0 bg-emerald-500 text-black font-bold text-xs px-2.5 py-1 rounded-full border border-black uppercase font-orbitron">Ejen Ready</span>
+            </div>
+
+            <div class="space-y-3 max-w-2xl mx-auto">
+                <h2 class="font-orbitron text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-300 glow-text-cyan">
+                    MISI: MAKAN BIJAK
+                </h2>
+                <p class="text-slate-300 text-sm md:text-base leading-relaxed px-4">
+                    Selamat datang, Ejen Muda! Bandar Cyber-Nutri memerlukan bantuan anda untuk mengesan makanan sihat dan mengelakkan makanan yang boleh menyebabkan **berat badan berlebihan** serta **obesiti**.
+                </p>
+            </div>
+
+            <!-- Card Objectives -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto text-left pt-2">
+                <div class="hologram-card p-4 rounded-xl border-l-4 border-l-cyan-400">
+                    <div class="text-cyan-400 font-bold font-orbitron text-xs mb-1">OBJEKTIF 1</div>
+                    <p class="text-xs text-slate-300">Kenali makanan & minuman yang menyebabkan peso berlebihan.</p>
+                </div>
+                <div class="hologram-card p-4 rounded-xl border-l-4 border-l-emerald-400">
+                    <div class="text-emerald-400 font-bold font-orbitron text-xs mb-1">OBJEKTIF 2</div>
+                    <p class="text-xs text-slate-300">Pengasingan kategori Pilihan Sihat vs Hadkan Pengambilan.</p>
+                </div>
+                <div class="hologram-card p-4 rounded-xl border-l-4 border-l-amber-400">
+                    <div class="text-amber-400 font-bold font-orbitron text-xs mb-1">OBJEKTIF 3</div>
+                    <p class="text-xs text-slate-300">Fahami kesan amalan pemakanan terhadap kesihatan diri.</p>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="startGame()" class="btn-cyber font-orbitron font-bold text-lg text-slate-900 px-10 py-4 rounded-xl tracking-wider uppercase inline-flex items-center gap-3">
+                    <i class="fa-solid fa-play"></i> Mula Misi
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAHAP 1: KENALI MAKANAN ================= -->
+        <section id="screen-level1" class="hidden w-full space-y-6">
+            <div class="text-center space-y-2">
+                <span class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-orbitron text-xs px-3 py-1 rounded-full uppercase tracking-widest">Tahap 1: Imbasan Bio-Nutrisi</span>
+                <h2 class="text-2xl md:text-3xl font-orbitron font-bold text-cyan-400">Kenali Makanan & Minuman</h2>
+                <p class="text-slate-300 text-sm max-w-xl mx-auto">Tekan pada setiap kad hologram di bawah untuk mengimbas maklumat gizi dan kesannya terhadap badan.</p>
+            </div>
+
+            <!-- Grid Cards -->
+            <div id="level1-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+                <!-- Cards injected dynamically via JS -->
+            </div>
+
+            <!-- Detail Display Modal/Panel -->
+            <div id="food-detail-panel" class="hologram-card p-5 rounded-2xl border-2 border-cyan-500/50 hidden transition-all duration-300">
+                <div class="flex flex-col md:flex-row items-center gap-5">
+                    <div id="detail-icon" class="text-6xl p-4 bg-slate-900/80 rounded-2xl border border-cyan-400/30">🍎</div>
+                    <div class="space-y-2 text-center md:text-left flex-1">
+                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                            <h3 id="detail-title" class="font-orbitron font-bold text-xl text-cyan-300">Nama Makanan</h3>
+                            <span id="detail-tag" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">SIHAT</span>
+                        </div>
+                        <p id="detail-desc" class="text-sm text-slate-300 leading-relaxed">Penerangan ringkas makanan.</p>
+                        <p id="detail-effect" class="text-xs font-medium text-amber-300/90 bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30">Kesan terhadap kesihatan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress tracker level 1 -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+                <div class="text-xs font-orbitron text-slate-400">
+                    Kad Diimbas: <span id="scanned-count" class="text-cyan-400 font-bold">0</span> / 6
+                </div>
+                <button id="btn-next-level1" onclick="completeLevel1()" disabled class="w-full sm:w-auto opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-3 rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition-all">
+                    <span>Selesai Imbasan</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAHAP 2: IMBAS & KELASKAN ================= -->
+        <section id="screen-level2" class="hidden w-full space-y-6">
+            <div class="text-center space-y-2">
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-orbitron text-xs px-3 py-1 rounded-full uppercase tracking-widest">Tahap 2: Pengasingan Data</span>
+                <h2 class="text-2xl md:text-3xl font-orbitron font-bold text-emerald-400">Kelaskan Makanan</h2>
+                <p class="text-slate-300 text-sm max-w-xl mx-auto">Pilih kad makanan, kemudian tekan kategori yang betul untuk mengelaskannya.</p>
+            </div>
+
+            <!-- Game Arena -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                
+                <!-- Category 1: PILIHAN SIHAT -->
+                <div id="drop-zone-healthy" onclick="classifySelected('HEALTHY')" class="md:col-span-4 hologram-card p-5 rounded-2xl border-2 border-emerald-500/40 text-center space-y-3 cursor-pointer hover:border-emerald-400 transition-all min-h-[220px] flex flex-col justify-between group">
+                    <div class="space-y-1">
+                        <div class="text-3xl text-emerald-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <h3 class="font-orbitron font-bold text-lg text-emerald-300">PILIHAN SIHAT</h3>
+                        <p class="text-xs text-slate-400">Memberi tenaga, kaya vitamin & mengekalkan berat ideal.</p>
+                    </div>
+                    <div id="container-healthy" class="flex flex-wrap justify-center gap-2 pt-3 border-t border-emerald-500/20 min-h-[60px]">
+                        <span class="text-xs text-slate-500 italic self-center">Tekan di sini untuk simpan Pilihan Sihat</span>
+                    </div>
+                </div>
+
+                <!-- Item selection middle queue -->
+                <div class="md:col-span-4 flex flex-col items-center justify-center space-y-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+                    <div class="text-xs font-orbitron text-cyan-400 font-semibold tracking-wider">ITEM SEMASA:</div>
+                    <div id="current-l2-card" class="hologram-card w-full p-6 rounded-2xl border-2 border-cyan-400 flex flex-col items-center justify-center gap-2 text-center shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+                        <span id="l2-card-icon" class="text-6xl animate-bounce">🍎</span>
+                        <span id="l2-card-title" class="font-orbitron font-bold text-lg text-slate-100">Buah Epal</span>
+                    </div>
+                    <p class="text-xs text-slate-400 text-center">Pilih sasaran kategori di kiri atau kanan.</p>
+                </div>
+
+                <!-- Category 2: HADKAN PENGAMBILAN -->
+                <div id="drop-zone-limit" onclick="classifySelected('LIMIT')" class="md:col-span-4 hologram-card p-5 rounded-2xl border-2 border-rose-500/40 text-center space-y-3 cursor-pointer hover:border-rose-400 transition-all min-h-[220px] flex flex-col justify-between group">
+                    <div class="space-y-1">
+                        <div class="text-3xl text-rose-400 group-hover:scale-110 transition-transform"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <h3 class="font-orbitron font-bold text-lg text-rose-300">HADKAN PENGAMBILAN</h3>
+                        <p class="text-xs text-slate-400">Tinggi gula/lemak/garam. Punca obesiti & berat berlebihan.</p>
+                    </div>
+                    <div id="container-limit" class="flex flex-wrap justify-center gap-2 pt-3 border-t border-rose-500/20 min-h-[60px]">
+                        <span class="text-xs text-slate-500 italic self-center">Tekan di sini untuk simpan Hadkan Pengambilan</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Feedback Message Banner -->
+            <div id="l2-feedback" class="hidden p-4 rounded-xl text-center font-medium text-sm transition-all"></div>
+
+            <!-- Navigation Button -->
+            <div class="flex justify-end pt-2">
+                <button id="btn-next-level2" onclick="completeLevel2()" disabled class="opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-3 rounded-xl border border-slate-700 flex items-center gap-2">
+                    <span>Teruskan ke Tahap 3</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= TAHAP 3: CABARAN AKHIR (QUIZ) ================= -->
+        <section id="screen-level3" class="hidden w-full space-y-6">
+            <div class="text-center space-y-2">
+                <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 font-orbitron text-xs px-3 py-1 rounded-full uppercase tracking-widest">Tahap 3: Ujian Taktikal</span>
+                <h2 class="text-2xl md:text-3xl font-orbitron font-bold text-amber-400">Cabaran Akhir Ejen</h2>
+                <p class="text-slate-300 text-sm max-w-xl mx-auto">Jawab soalan-soalan situasi di bawah untuk menguji kefahaman anda.</p>
+            </div>
+
+            <!-- Quiz Box -->
+            <div class="hologram-card p-6 md:p-8 rounded-2xl border-2 border-amber-500/40 space-y-6 max-w-3xl mx-auto">
+                <!-- Question Tracker -->
+                <div class="flex justify-between items-center text-xs font-orbitron border-b border-slate-800 pb-3">
+                    <span class="text-amber-400">SOALAN <span id="quiz-num">1</span> DARIPADA 5</span>
+                    <span id="quiz-badge-tag" class="text-slate-400"><i class="fa-solid fa-circle-question"></i> Ujian Teori</span>
+                </div>
+
+                <!-- Question Text -->
+                <h3 id="quiz-question" class="text-lg md:text-xl font-bold text-slate-100 leading-relaxed">
+                    Soalan akan dipaparkan di sini...
+                </h3>
+
+                <!-- Options -->
+                <div id="quiz-options" class="space-y-3">
+                    <!-- Option buttons dynamically generated -->
+                </div>
+
+                <!-- Quiz Explanation Banner -->
+                <div id="quiz-explanation" class="hidden p-4 rounded-xl bg-slate-900 border border-cyan-500/40 text-sm space-y-1">
+                    <div id="explanation-status" class="font-orbitron font-bold text-cyan-400">MAKLUM BALAS:</div>
+                    <p id="explanation-text" class="text-slate-300">Penerangan soalan...</p>
+                </div>
+
+                <!-- Next Question Button -->
+                <div class="flex justify-end pt-2">
+                    <button id="btn-next-quiz" onclick="nextQuestion()" disabled class="opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-2.5 rounded-xl border border-slate-700 flex items-center gap-2">
+                        <span>Soalan Seterusnya</span> <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SKRIN TAMAT & REFLEKSI ================= -->
+        <section id="screen-end" class="hidden w-full space-y-8 py-4">
+            <div class="text-center space-y-4 max-w-2xl mx-auto">
+                <div class="w-24 h-24 mx-auto rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-300 text-5xl animate-bounce shadow-[0_0_30px_rgba(245,158,11,0.4)]">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-orbitron font-black text-amber-400 glow-text-amber">MISI SELESAI! TAHNIAH!</h2>
+                <p class="text-slate-300 text-sm md:text-base">Anda telah berjaya menamatkan semua latihan dan diiktiraf sebagai **EJEN PEMAKANAN SIHAT**.</p>
+            </div>
+
+            <!-- Score Summary Card -->
+            <div class="hologram-card p-6 rounded-2xl border-2 border-cyan-400 max-w-xl mx-auto text-center space-y-4">
+                <div class="font-orbitron text-xs text-cyan-400 tracking-widest uppercase">Laporan Prestasi Misi</div>
+                <div class="text-4xl md:text-5xl font-orbitron font-black text-amber-400" id="final-score-display">0 MATA</div>
+                <div class="flex justify-center gap-4 pt-2" id="final-badges-list">
+                    <!-- Badges acquired -->
+                </div>
+            </div>
+
+            <!-- Section Refleksi (Reflection Form) -->
+            <div class="hologram-card p-6 rounded-2xl border border-emerald-500/40 max-w-2xl mx-auto space-y-4">
+                <div class="flex items-center gap-2 text-emerald-400 font-orbitron font-bold border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <h3>JURNAL REFLEKSI EJEN</h3>
+                </div>
+                <p class="text-xs text-slate-300">Lengkapkan refleksi amalan pemakanan anda untuk dimasukkan ke dalam pangkalan data Ejen:</p>
+                
+                <form id="reflection-form" onsubmit="submitReflection(event)" class="space-y-4 text-left">
+                    <div>
+                        <label class="block text-xs font-semibold text-cyan-300 mb-1">1. Satu pilihan makanan / minuman SIHAT pilihan saya ialah:</label>
+                        <input type="text" id="reflect-healthy" required placeholder="Contoh: Buah epal / Air kosong / Sayur sawi" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-rose-300 mb-1">2. Satu KESAN pengambilan makanan berlemak / bergula secara berlebihan ialah:</label>
+                        <input type="text" id="reflect-effect" required placeholder="Contoh: Berat badan berlebihan / Obesiti / Badan cepat letih" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-rose-400">
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-orbitron font-bold py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Refleksi
+                    </button>
+                </form>
+
+                <div id="reflection-saved-msg" class="hidden p-3 bg-emerald-950/60 border border-emerald-500/50 rounded-lg text-center text-xs text-emerald-300 font-medium">
+                    <i class="fa-solid fa-circle-check"></i> Jurnal refleksi berjaya disimpan dalam sistem!
+                </div>
+            </div>
+
+            <!-- Restart Button -->
+            <div class="text-center pt-2">
+                <button onclick="restartGame()" class="btn-cyber font-orbitron font-bold text-slate-900 px-8 py-3.5 rounded-xl tracking-wider uppercase inline-flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Semula Misi
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full border-t border-slate-900 bg-slate-950/80 py-3 text-center text-xs text-slate-500 font-medium">
+        <p>MISI EJEN: MAKAN BIJAK • Menerapkan Gaya Hidup Sihat Melalui Kurikulum Pendidikan Kesihatan Tahun 2</p>
+    </footer>
+
+    <script>
+        // Game State
+        let currentScore = 0;
+        let currentLevel = 1;
+        let badges = { level1: false, level2: false, level3: false };
+
+        // Food Items Data (Level 1 & Level 2)
+        const foodDatabase = [
+            { id: 'f1', name: 'Buah Epal', icon: '🍎', category: 'HEALTHY', desc: 'Kaya dengan vitamin dan serat semula jadi.', effect: 'Membantu penghadaman & mengekalkan berat badan sihat.' },
+            { id: 'f2', name: 'Sayur Sawi', icon: '🥦', category: 'HEALTHY', desc: 'Mengandungi zat besi dan kalsium tinggi.', effect: 'Menguatkan tulang dan daya tahan penyakit.' },
+            { id: 'f3', name: 'Air Kosong', icon: '🥛', category: 'HEALTHY', desc: 'Minuman bersih tanpa sebarang gula tambahan.', effect: 'Melembapkan badan & menyihatkan organ dalaman.' },
+            { id: 'f4', name: 'Minuman Manis', icon: '🧃', category: 'LIMIT', desc: 'Mengandungi kandungan gula berlebihan.', effect: 'Boleh menyebabkan berat badan berlebihan & kerosakan gigi.' },
+            { id: 'f5', name: 'Gula-gula', icon: '🍬', category: 'LIMIT', desc: 'Tinggi kandungan gula tanpa zat makanan.', effect: 'Menyebabkan kegemukan dan kencing manis jika berlebihan.' },
+            { id: 'f6', name: 'Ayam Goreng', icon: '🍗', category: 'LIMIT', desc: 'Mengandungi minyak dan lemak tepu yang tinggi.', effect: 'Pengambilan kerap boleh membawa kepada obesiti.' }
+        ];
+
+        // Quiz Questions Data (Level 3)
+        const quizDatabase = [
+            {
+                q: "Antara berikut, minuman manakah yang paling SIHAT untuk diminum setiap hari?",
+                options: ["Air Kosong", "Minuman Berkarbonat Manis", "Teh Ais Manis"],
+                answer: 0,
+                explanation: "Air kosong adalah pilihan paling sihat kerana tidak mengandungi gula tambahan yang boleh merosakkan kesihatan."
+            },
+            {
+                q: "Apakah kesan jika seseorang sering makan gula-gula dan makanan bergoreng secara berlebihan?",
+                options: ["Mata menjadi semakin terang", "Mengalami berat badan berlebihan dan obesiti", "Tulang menjadi lebih kuat"],
+                answer: 1,
+                explanation: "Makanan tinggi gula dan lemak secara berlebihan akan menyumbang kepada peningkatan berat badan berlebihan."
+            },
+            {
+                q: "Mengapakah kita perlu membanyakkan makan buah-buahan dan sayur-sayuran?",
+                options: ["Kerana ia mengandungi vitamin dan serat yang sihat", "Kerana ia menyebabkan kita cepat mengantuk", "Kerana ia mengandungi banyak minyak"],
+                answer: 0,
+                explanation: "Buah dan sayur membekalkan vitamin dan serat penting untuk menjaga kesihatan badan."
+            },
+            {
+                q: "Manakah antara berikut merupakan amalan pemakanan yang perlu DIHADKAN?",
+                options: ["Makan buah-buahan tempatan", "Minum air kosong 8 gelas sehari", "Makan makanan bergoreng dan minuman bergula setiap hari"],
+                answer: 2,
+                explanation: "Makanan bergoreng dan minuman bergula tinggi kalori dan lemak, jadi pengambilannya mesti dihadkan."
+            },
+            {
+                q: "Apakah maksud 'Obesiti'?",
+                options: ["Keadaan berat badan yang terlalu kurang", "Pengumpulan lemak berlebihan di dalam badan yang menjejaskan kesihatan", "Keadaan badan yang sangat berotot dan sihat"],
+                answer: 1,
+                explanation: "Obesiti ialah keadaan pengumpulan lemak berlebihan akibat pengambilan kalori atau gula berlebihan."
+            }
+        ];
+
+        // Level 1 Trackers
+        let scannedCards = new Set();
+
+        // Level 2 Trackers
+        let l2RemainingItems = [];
+        let l2CurrentItem = null;
+
+        // Level 3 Trackers
+        let currentQuizIndex = 0;
+        let selectedQuizOption = null;
+
+        function showScreen(screenId) {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-level1').classList.add('hidden');
+            document.getElementById('screen-level2').classList.add('hidden');
+            document.getElementById('screen-level3').classList.add('hidden');
+            document.getElementById('screen-end').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateHUD() {
+            document.getElementById('score-val').innerText = currentScore;
+            document.getElementById('level-indicator').innerText = `${currentLevel} / 3`;
+
+            // Badges UI update
+            if(badges.level1) document.getElementById('badge-1').classList.remove('opacity-40');
+            if(badges.level2) document.getElementById('badge-2').classList.remove('opacity-40');
+            if(badges.level3) document.getElementById('badge-3').classList.remove('opacity-40');
+        }
+
+        function startGame() {
+            currentScore = 0;
+            currentLevel = 1;
+            badges = { level1: false, level2: false, level3: false };
+            scannedCards.clear();
+
+            document.getElementById('hud-stats').classList.remove('hidden');
+            updateHUD();
+            initLevel1();
+            showScreen('screen-level1');
+        }
+
+        function initLevel1() {
+            const grid = document.getElementById('level1-cards-grid');
+            grid.innerHTML = '';
+
+            foodDatabase.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `hologram-card p-4 rounded-xl text-center cursor-pointer flex flex-col items-center justify-center gap-2 border border-cyan-500/30 hover:border-cyan-400 transition-all transform hover:-translate-y-1`;
+                card.id = `card-l1-${item.id}`;
+                card.onclick = () => scanFoodCard(item);
+
+                card.innerHTML = `
+                    <span class="text-4xl">${item.icon}</span>
+                    <span class="font-orbitron text-xs font-bold text-slate-200">${item.name}</span>
+                    <span id="badge-scanned-${item.id}" class="text-[10px] font-semibold text-slate-500 uppercase"><i class="fa-solid fa-qrcode"></i> Belum Diimbas</span>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('food-detail-panel').classList.add('hidden');
+            document.getElementById('scanned-count').innerText = "0";
+            
+            const btn = document.getElementById('btn-next-level1');
+            btn.disabled = true;
+            btn.className = "w-full sm:w-auto opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-3 rounded-xl border border-slate-700 flex items-center justify-center gap-2";
+        }
+
+        function scanFoodCard(item) {
+            // Display Detail Panel
+            const panel = document.getElementById('food-detail-panel');
+            panel.classList.remove('hidden');
+
+            document.getElementById('detail-icon').innerText = item.icon;
+            document.getElementById('detail-title').innerText = item.name;
+            document.getElementById('detail-desc').innerText = item.desc;
+            document.getElementById('detail-effect').innerText = "💡 Kesan: " + item.effect;
+
+            const tag = document.getElementById('detail-tag');
+            if(item.category === 'HEALTHY') {
+                tag.innerText = "PILIHAN SIHAT";
+                tag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+            } else {
+                tag.innerText = "HADKAN PENGAMBILAN";
+                tag.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/40";
+            }
+
+            // Track scanned status
+            if(!scannedCards.has(item.id)) {
+                scannedCards.add(item.id);
+                currentScore += 10;
+                updateHUD();
+
+                const cardElem = document.getElementById(`card-l1-${item.id}`);
+                cardElem.classList.add('border-cyan-400', 'bg-cyan-950/30');
+                
+                const statusElem = document.getElementById(`badge-scanned-${item.id}`);
+                statusElem.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Diimbas`;
+                statusElem.className = "text-[10px] font-semibold text-emerald-400 uppercase";
+
+                document.getElementById('scanned-count').innerText = scannedCards.size;
+            }
+
+            // Enable next button if all 6 scanned
+            if(scannedCards.size >= 6) {
+                const btn = document.getElementById('btn-next-level1');
+                btn.disabled = false;
+                btn.className = "w-full sm:w-auto btn-cyber text-slate-900 font-orbitron font-bold px-6 py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer";
+            }
+        }
+
+        function completeLevel1() {
+            badges.level1 = true;
+            currentLevel = 2;
+            updateHUD();
+            initLevel2();
+            showScreen('screen-level2');
+        }
+
+        function initLevel2() {
+            l2RemainingItems = [...foodDatabase].sort(() => Math.random() - 0.5);
+            document.getElementById('container-healthy').innerHTML = '';
+            document.getElementById('container-limit').innerHTML = '';
+            document.getElementById('l2-feedback').className = "hidden p-4 rounded-xl text-center font-medium text-sm";
+            
+            const btn = document.getElementById('btn-next-level2');
+            btn.disabled = true;
+            btn.className = "opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-3 rounded-xl border border-slate-700 flex items-center gap-2";
+
+            loadNextL2Item();
+        }
+
+        function loadNextL2Item() {
+            if(l2RemainingItems.length > 0) {
+                l2CurrentItem = l2RemainingItems.pop();
+                document.getElementById('l2-card-icon').innerText = l2CurrentItem.icon;
+                document.getElementById('l2-card-title').innerText = l2CurrentItem.name;
+            } else {
+                l2CurrentItem = null;
+                document.getElementById('l2-card-icon').innerText = "✅";
+                document.getElementById('l2-card-title').innerText = "Semua Kad Selesai!";
+                
+                // Enable next button
+                badges.level2 = true;
+                updateHUD();
+
+                const btn = document.getElementById('btn-next-level2');
+                btn.disabled = false;
+                btn.className = "btn-cyber text-slate-900 font-orbitron font-bold px-6 py-3 rounded-xl flex items-center gap-2 cursor-pointer";
+            }
+        }
+
+        function classifySelected(categoryChoice) {
+            if(!l2CurrentItem) return;
+
+            const feedback = document.getElementById('l2-feedback');
+            feedback.classList.remove('hidden');
+
+            if(l2CurrentItem.category === categoryChoice) {
+                // Correct classification
+                currentScore += 20;
+                updateHUD();
+
+                feedback.className = "p-4 rounded-xl text-center font-medium text-sm bg-emerald-950/80 border border-emerald-500 text-emerald-300";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>TEPAT Sekali!</strong> ${l2CurrentItem.name} dikelaskan dengan betul.`;
+
+                // Add mini badge to corresponding bucket
+                const badge = document.createElement('span');
+                badge.className = "px-2.5 py-1 bg-slate-900 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1 text-slate-200 animate-pulse";
+                badge.innerHTML = `${l2CurrentItem.icon} ${l2CurrentItem.name}`;
+
+                if(categoryChoice === 'HEALTHY') {
+                    document.getElementById('container-healthy').appendChild(badge);
+                } else {
+                    document.getElementById('container-limit').appendChild(badge);
+                }
+
+                loadNextL2Item();
+            } else {
+                // Incorrect classification
+                feedback.className = "p-4 rounded-xl text-center font-medium text-sm bg-rose-950/80 border border-rose-500 text-rose-300";
+                feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>SILA CUBA LAGI!</strong> ${l2CurrentItem.name} tidak sesuai dikelaskan dalam kategori tersebut.`;
+            }
+        }
+
+        function completeLevel2() {
+            currentLevel = 3;
+            updateHUD();
+            initLevel3();
+            showScreen('screen-level3');
+        }
+
+        function initLevel3() {
+            currentQuizIndex = 0;
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            selectedQuizOption = null;
+            const qData = quizDatabase[currentQuizIndex];
+
+            document.getElementById('quiz-num').innerText = currentQuizIndex + 1;
+            document.getElementById('quiz-question').innerText = qData.q;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-cyan-400/80 text-sm md:text-base font-medium transition-all flex items-center justify-between group";
+                btn.onclick = () => selectQuizOption(index);
+                btn.id = `quiz-opt-${index}`;
+
+                btn.innerHTML = `
+                    <span class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-800 border border-slate-600 flex items-center justify-center font-orbitron text-xs text-cyan-400 group-hover:border-cyan-400">${String.fromCharCode(65 + index)}</span>
+                        <span>${optText}</span>
+                    </span>
+                    <i class="fa-regular fa-circle text-slate-600 group-hover:text-cyan-400"></i>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Reset explanation status
+            document.getElementById('quiz-explanation').classList.add('hidden');
+            
+            const btnNext = document.getElementById('btn-next-quiz');
+            btnNext.disabled = true;
+            btnNext.className = "opacity-50 cursor-not-allowed bg-slate-800 text-slate-400 font-orbitron font-bold px-6 py-2.5 rounded-xl border border-slate-700 flex items-center gap-2";
+        }
+
+        function selectQuizOption(optIndex) {
+            if(selectedQuizOption !== null) return; // Prevent changing after answer
+            selectedQuizOption = optIndex;
+
+            const qData = quizDatabase[currentQuizIndex];
+            const isCorrect = (optIndex === qData.answer);
+
+            // Highlight chosen option
+            const chosenBtn = document.getElementById(`quiz-opt-${optIndex}`);
+            if(isCorrect) {
+                chosenBtn.classList.remove('bg-slate-900/90', 'border-slate-700');
+                chosenBtn.classList.add('bg-emerald-950/80', 'border-emerald-500', 'text-emerald-300');
+                chosenBtn.querySelector('i').className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+                currentScore += 30;
+                updateHUD();
+            } else {
+                chosenBtn.classList.remove('bg-slate-900/90', 'border-slate-700');
+                chosenBtn.classList.add('bg-rose-950/80', 'border-rose-500', 'text-rose-300');
+                chosenBtn.querySelector('i').className = "fa-solid fa-circle-xmark text-rose-400 text-lg";
+
+                // Highlight correct one
+                const correctBtn = document.getElementById(`quiz-opt-${qData.answer}`);
+                correctBtn.classList.add('bg-emerald-950/40', 'border-emerald-500/60');
+            }
+
+            // Show explanation
+            const expBox = document.getElementById('quiz-explanation');
+            expBox.classList.remove('hidden');
+
+            const statusText = document.getElementById('explanation-status');
+            if(isCorrect) {
+                statusText.innerText = "JAWAPAN TEPAT! (+30 MATA)";
+                statusText.className = "font-orbitron font-bold text-emerald-400";
+            } else {
+                statusText.innerText = "JAWAPAN KURANG TEPAT";
+                statusText.className = "font-orbitron font-bold text-rose-400";
+            }
+
+            document.getElementById('explanation-text').innerText = qData.explanation;
+
+            // Enable next button
+            const btnNext = document.getElementById('btn-next-quiz');
+            btnNext.disabled = false;
+            btnNext.className = "btn-cyber text-slate-900 font-orbitron font-bold px-6 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer";
+        }
+
+        function nextQuestion() {
+            if(currentQuizIndex < quizDatabase.length - 1) {
+                currentQuizIndex++;
+                loadQuizQuestion();
+            } else {
+                badges.level3 = true;
+                updateHUD();
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('final-score-display').innerText = `${currentScore} MATA`;
+
+            const badgesList = document.getElementById('final-badges-list');
+            badgesList.innerHTML = `
+                <div class="p-3 bg-slate-900/80 border border-cyan-500/40 rounded-xl text-center">
+                    <div class="text-xl text-cyan-400 mb-1"><i class="fa-solid fa-eye"></i></div>
+                    <div class="text-[10px] font-orbitron font-bold text-slate-300">EJEN PENGAMAT</div>
+                </div>
+                <div class="p-3 bg-slate-900/80 border border-emerald-500/40 rounded-xl text-center">
+                    <div class="text-xl text-emerald-400 mb-1"><i class="fa-solid fa-filter"></i></div>
+                    <div class="text-[10px] font-orbitron font-bold text-slate-300">EJEN PENILAI</div>
+                </div>
+                <div class="p-3 bg-slate-900/80 border border-amber-500/40 rounded-xl text-center">
+                    <div class="text-xl text-amber-400 mb-1"><i class="fa-solid fa-crown"></i></div>
+                    <div class="text-[10px] font-orbitron font-bold text-slate-300">EJEN MASTER</div>
+                </div>
+            `;
+
+            showScreen('screen-end');
+        }
+
+        function submitReflection(event) {
+            event.preventDefault();
+            const healthyInput = document.getElementById('reflect-healthy').value.trim();
+            const effectInput = document.getElementById('reflect-effect').value.trim();
+
+            if(healthyInput && effectInput) {
+                document.getElementById('reflection-form').reset();
+                document.getElementById('reflection-saved-msg').classList.remove('hidden');
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('reflection-saved-msg').classList.add('hidden');
+            startGame();
+        }
+    </script>
+</body>
+</html>
